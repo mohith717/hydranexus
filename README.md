@@ -95,33 +95,29 @@ GitHub| Source-code hosting
 
 ---
 
-◈ PROJECT STRUCTURE
+flowchart TD
+    A["💧 HYDRANEXUS"] --> B["app.py<br/>Wakanda Control System Dashboard"]
+    A --> C["detector.py<br/>Intelligent Detection Engine"]
+    A --> D["test_detector.py<br/>Automated Detection Tests"]
+    A --> E["app_backup.py<br/>Application Backup"]
+    A --> F["requirements.txt<br/>Python Dependencies"]
+    A --> G["README.md<br/>Project Documentation"]
+    A --> H[".gitignore<br/>Excluded Files"]
 
-HYDRANEXUS/
-│
-├── app.py                  # Main Wakanda Control System dashboard
-│
-├── app_backup.py           # Application backup
-│
-├── detector.py             # Intelligent flow detection engine
-│
-├── test_detector.py        # Automated detection logic tests
-│
-├── requirements.txt        # Python dependencies
-│
-├── README.md               # Project documentation
-│
-└── .gitignore              # Excluded files and directories
+    B --> B1["Telemetry & Analytics"]
+    B --> B2["Virtual Sensor Network"]
+    B --> B3["Visual & Audio Alerts"]
+    C --> C1["Flow Validation"]
+    C --> C2["Sustained High-Flow Detection"]
 
-Module Responsibilities
-
-FILE| DESCRIPTION
-"app.py"| Futuristic Streamlit dashboard, telemetry, virtual sensors, alerts and analytics
-"detector.py"| Flow validation and sustained high-flow detection
-"test_detector.py"| Unit testing of detection functionality
-"requirements.txt"| Required Python packages
-"README.md"| Project overview, architecture and setup instructions
-".gitignore"| Prevents unnecessary and private files from being committed
+    style A fill:#102A43,stroke:#00D9FF,color:#FFFFFF
+    style B fill:#123B50,stroke:#00D9FF,color:#FFFFFF
+    style C fill:#123B50,stroke:#00D9FF,color:#FFFFFF
+    style D fill:#123B50,stroke:#00D9FF,color:#FFFFFF
+    style E fill:#263746,stroke:#78909C,color:#FFFFFF
+    style F fill:#263746,stroke:#78909C,color:#FFFFFF
+    style G fill:#263746,stroke:#78909C,color:#FFFFFF
+    style H fill:#263746,stroke:#78909C,color:#FFFFFF
 
 ---
 
