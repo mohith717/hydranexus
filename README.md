@@ -99,14 +99,29 @@ GitHub| Source-code hosting
 
 HYDRANEXUS/
 │
-├── app.py                  # Main command dashboard
+├── app.py                  # Main Wakanda Control System dashboard
+│
 ├── app_backup.py           # Application backup
-├── detector.py             # Intelligent detection engine
-├── test_detector.py        # Detection logic tests
+│
+├── detector.py             # Intelligent flow detection engine
+│
+├── test_detector.py        # Automated detection logic tests
+│
 ├── requirements.txt        # Python dependencies
+│
 ├── README.md               # Project documentation
 │
-└── .gitignore              # Excluded files
+└── .gitignore              # Excluded files and directories
+
+Module Responsibilities
+
+FILE| DESCRIPTION
+"app.py"| Futuristic Streamlit dashboard, telemetry, virtual sensors, alerts and analytics
+"detector.py"| Flow validation and sustained high-flow detection
+"test_detector.py"| Unit testing of detection functionality
+"requirements.txt"| Required Python packages
+"README.md"| Project overview, architecture and setup instructions
+".gitignore"| Prevents unnecessary and private files from being committed
 
 ---
 
