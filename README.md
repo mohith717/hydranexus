@@ -95,29 +95,25 @@ GitHub| Source-code hosting
 
 ---
 
+## ◈ PROJECT STRUCTURE
+
+```mermaid
 flowchart TD
-    A["💧 HYDRANEXUS"] --> B["app.py<br/>Wakanda Control System Dashboard"]
-    A --> C["detector.py<br/>Intelligent Detection Engine"]
-    A --> D["test_detector.py<br/>Automated Detection Tests"]
-    A --> E["app_backup.py<br/>Application Backup"]
-    A --> F["requirements.txt<br/>Python Dependencies"]
-    A --> G["README.md<br/>Project Documentation"]
-    A --> H[".gitignore<br/>Excluded Files"]
+    A["💧 HYDRANEXUS"] --> B["app.py - Wakanda Control System"]
+    A --> C["detector.py - Detection Engine"]
+    A --> D["test_detector.py - Automated Tests"]
+    A --> E["app_backup.py - Application Backup"]
+    A --> F["requirements.txt - Dependencies"]
+    A --> G["README.md - Documentation"]
+    A --> H[".gitignore - Excluded Files"]
 
     B --> B1["Telemetry & Analytics"]
     B --> B2["Virtual Sensor Network"]
     B --> B3["Visual & Audio Alerts"]
+
     C --> C1["Flow Validation"]
     C --> C2["Sustained High-Flow Detection"]
-
-    style A fill:#102A43,stroke:#00D9FF,color:#FFFFFF
-    style B fill:#123B50,stroke:#00D9FF,color:#FFFFFF
-    style C fill:#123B50,stroke:#00D9FF,color:#FFFFFF
-    style D fill:#123B50,stroke:#00D9FF,color:#FFFFFF
-    style E fill:#263746,stroke:#78909C,color:#FFFFFF
-    style F fill:#263746,stroke:#78909C,color:#FFFFFF
-    style G fill:#263746,stroke:#78909C,color:#FFFFFF
-    style H fill:#263746,stroke:#78909C,color:#FFFFFF
+```
 
 ---
 
