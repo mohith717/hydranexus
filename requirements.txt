@@ -1,4 +1,4 @@
 streamlit
 pandas
-plotty
+plotly
 streamlit-autorefresh
