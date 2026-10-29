@@ -1,9 +1,9 @@
 import firebase_admin
 from firebase_admin import credentials, db
 from pathlib import Path
+import streamlit as st
 
 
-# Firebase project configuration
 BASE_DIR = Path(__file__).resolve().parent
 CREDENTIAL_PATH = BASE_DIR / "hydranexus-service-account.json"
 
@@ -16,18 +16,38 @@ DATABASE_URL = (
 def initialize_firebase():
     """Initialize Firebase Admin SDK once."""
 
-    if not firebase_admin._apps:
-        if not CREDENTIAL_PATH.exists():
-            raise FileNotFoundError(
-                f"Firebase credential not found: {CREDENTIAL_PATH}"
-            )
+    if firebase_admin._apps:
+        return
 
-        credential = credentials.Certificate(str(CREDENTIAL_PATH))
+    service_account_info = None
 
-        firebase_admin.initialize_app(
-            credential,
-            {"databaseURL": DATABASE_URL}
+    try:
+        service_account_info = dict(
+            st.secrets["firebase_service_account"]
         )
+    except Exception:
+        service_account_info = None
+
+    if service_account_info:
+        credential = credentials.Certificate(
+            service_account_info
+        )
+    elif CREDENTIAL_PATH.exists():
+        credential = credentials.Certificate(
+            str(CREDENTIAL_PATH)
+        )
+    else:
+        raise FileNotFoundError(
+            "Firebase credentials unavailable. "
+            "Configure firebase_service_account in "
+            "Streamlit Cloud Secrets or provide the local "
+            "service-account JSON."
+        )
+
+    firebase_admin.initialize_app(
+        credential,
+        {"databaseURL": DATABASE_URL}
+    )
 
 
 def get_latest_sensor_data():
