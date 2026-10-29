@@ -1,5 +1,6 @@
 import math
 import random
+from html import escape as html_escape
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -10,6 +11,16 @@ import streamlit.components.v1 as components
 from streamlit_autorefresh import st_autorefresh
 
 from detector import detect_possible_leak
+
+# Optional local Firebase Admin bridge for the experimental mobile sensor feed.
+try:
+    from firebase_bridge import get_latest_sensor_data
+    FIREBASE_BRIDGE_AVAILABLE = True
+    FIREBASE_BRIDGE_ERROR = None
+except Exception as bridge_import_error:
+    get_latest_sensor_data = None
+    FIREBASE_BRIDGE_AVAILABLE = False
+    FIREBASE_BRIDGE_ERROR = str(bridge_import_error)
 
 
 # =========================================================
@@ -328,6 +339,173 @@ st.markdown(
     .nx-mini-card { transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease; }
     .nx-mini-card:hover { transform:translateY(-4px); border-color:#4ceaff; box-shadow:0 0 22px #22dfff30; }
     @media (prefers-reduced-motion: reduce) { *, *:before, *:after { animation:none !important; transition:none !important; } }
+
+
+    /* ======================================================
+       AOI // ULTRA COMMAND INTERFACE — UNIFIED NINE-WORKSPACE SKIN
+       Presentation layer only: no detector or data-flow changes.
+       ====================================================== */
+    :root {
+      --aoi-cyan:#59efff; --aoi-blue:#398bff; --aoi-violet:#a78bfa;
+      --aoi-mint:#5df2c0; --aoi-ink:#030914; --aoi-line:rgba(84,220,255,.24);
+    }
+    .block-container {
+      max-width:1580px !important;
+      padding-top:1.05rem !important;
+      padding-bottom:3.4rem !important;
+    }
+    .stApp {
+      background-image:
+        radial-gradient(ellipse at 8% 8%,rgba(25,112,170,.13),transparent 32%),
+        radial-gradient(ellipse at 92% 24%,rgba(91,60,180,.10),transparent 30%),
+        linear-gradient(rgba(75,205,245,.027) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(75,205,245,.027) 1px,transparent 1px),
+        linear-gradient(145deg,#020711 0%,#071425 54%,#030914 100%) !important;
+      background-size:auto,auto,38px 38px,38px 38px,auto !important;
+    }
+    [data-testid="stHeader"] {
+      background:rgba(2,8,18,.78) !important;
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(80,215,255,.10);
+    }
+    [data-testid="stSidebar"] {
+      background:linear-gradient(180deg,rgba(7,22,42,.99),rgba(3,8,18,.99)) !important;
+      border-right:1px solid rgba(76,220,255,.30) !important;
+      box-shadow:14px 0 48px rgba(0,0,0,.22),inset -1px 0 22px rgba(40,180,255,.035);
+    }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3 {
+      color:#70eaff !important; font:800 11px Orbitron,sans-serif !important;
+      letter-spacing:1.8px !important; text-transform:uppercase;
+    }
+    [data-testid="stSidebar"] hr {border-color:rgba(73,190,230,.20) !important;}
+    .nx-topbar {
+      position:relative; overflow:hidden;
+      border:1px solid rgba(81,216,255,.30) !important;
+      background:linear-gradient(100deg,rgba(5,18,34,.96),rgba(9,38,58,.94) 48%,rgba(14,20,47,.96)) !important;
+      box-shadow:0 8px 28px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.035);
+      min-height:43px;
+    }
+    .nx-topbar:after {
+      content:"";position:absolute;left:-35%;top:0;width:24%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(94,238,255,.09),transparent);
+      transform:skewX(-22deg);animation:aoiSweep 8s ease-in-out infinite;
+    }
+    @keyframes aoiSweep {0%,20%{left:-35%}75%,100%{left:125%}}
+    .nx-hero-grid {gap:14px !important;}
+    .nx-hero-main {
+      min-height:265px !important; padding:clamp(22px,3vw,36px) !important;
+      border:1px solid rgba(76,222,255,.42) !important;
+      background:
+        radial-gradient(circle at 83% 48%,rgba(0,221,255,.19),transparent 25%),
+        radial-gradient(circle at 5% 100%,rgba(81,94,255,.12),transparent 42%),
+        linear-gradient(118deg,#0c2945 0%,#061425 60%,#091e32 100%) !important;
+      box-shadow:0 18px 54px rgba(0,0,0,.27),inset 0 0 55px rgba(42,211,255,.045) !important;
+    }
+    .nx-hero-main:before {
+      content:"AOI / ARTIFICIAL + ORIGINAL INTELLIGENCE";
+      position:absolute;right:20px;bottom:15px;z-index:1;
+      color:rgba(129,220,245,.32);font:700 8px Orbitron,sans-serif;letter-spacing:1.5px;
+    }
+    .nx-brand {
+      font-size:clamp(34px,5.4vw,66px) !important;
+      letter-spacing:2px !important;
+      text-shadow:0 0 16px rgba(53,231,255,.30),0 0 42px rgba(53,231,255,.13) !important;
+    }
+    .nx-description {max-width:690px !important;font-size:14px !important;line-height:1.8 !important;}
+    .nx-tag {
+      border-radius:6px !important;border-color:rgba(77,219,255,.38) !important;
+      background:linear-gradient(135deg,rgba(9,43,66,.92),rgba(8,25,46,.92)) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .nx-core {
+      border-color:rgba(91,206,255,.40) !important;
+      background:radial-gradient(circle at 50% 38%,rgba(25,113,147,.22),transparent 42%),linear-gradient(155deg,#0b2036,#050d1a) !important;
+      box-shadow:0 18px 48px rgba(0,0,0,.25),inset 0 0 35px rgba(46,204,255,.045) !important;
+    }
+    .nx-orbit {box-shadow:0 0 42px rgba(22,223,255,.22),inset 0 0 30px rgba(22,223,255,.12) !important;}
+    .nx-orbit-core {background:radial-gradient(circle,#2796b2,#0b2c43 72%) !important;}
+    .nx-section-title {
+      margin:23px 0 13px !important; letter-spacing:2.3px !important;
+      text-shadow:0 0 15px rgba(53,231,255,.18);
+    }
+    .nx-mini-card,.nx-info-card,.nx-alert-card,.nx-safe-card {
+      position:relative;overflow:hidden;
+      box-shadow:0 10px 28px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.035) !important;
+    }
+    .nx-mini-card {
+      min-height:104px !important;padding:17px 17px !important;
+      border-color:rgba(69,196,235,.32) !important;
+      background:linear-gradient(145deg,rgba(13,39,62,.98),rgba(5,17,31,.98)) !important;
+    }
+    .nx-mini-value {font-size:clamp(20px,2.2vw,27px) !important;}
+    .nx-info-card {
+      border-color:rgba(72,183,223,.30) !important;
+      background:linear-gradient(145deg,rgba(10,31,51,.98),rgba(5,15,28,.98)) !important;
+    }
+    .nx-alert-card {border-color:rgba(255,83,109,.72) !important;}
+    .nx-safe-card {border-color:rgba(35,220,160,.54) !important;}
+    /* Nine workspaces: consistent, high-contrast, horizontally navigable tabs. */
+    .stTabs {margin-top:4px;}
+    .stTabs [data-baseweb="tab-list"] {
+      display:flex !important;flex-wrap:nowrap !important;gap:7px !important;
+      overflow-x:auto !important;overflow-y:hidden !important;
+      padding:9px 8px 12px !important;margin:0 -4px 5px !important;
+      background:linear-gradient(90deg,rgba(5,17,31,.96),rgba(9,27,46,.92),rgba(5,17,31,.96)) !important;
+      border:1px solid rgba(70,184,220,.20) !important;border-radius:14px !important;
+      scrollbar-width:thin;scrollbar-color:#24617c #071321;
+    }
+    .stTabs [data-baseweb="tab"] {
+      flex:0 0 auto !important;white-space:nowrap !important;
+      min-height:42px !important;padding:10px 15px !important;
+      border:1px solid rgba(73,151,190,.27) !important;border-radius:9px !important;
+      background:linear-gradient(180deg,rgba(12,32,51,.96),rgba(6,17,30,.96)) !important;
+      color:#9bbbd0 !important;font:800 9px Orbitron,sans-serif !important;
+      letter-spacing:.8px !important;transition:all .2s ease !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+      color:#dffaff !important;border-color:rgba(79,224,255,.62) !important;
+      background:linear-gradient(180deg,#123750,#0a2238) !important;
+      transform:translateY(-1px);
+    }
+    .stTabs [aria-selected="true"] {
+      color:#e9fdff !important;border-color:#4bdff5 !important;
+      background:linear-gradient(135deg,rgba(17,74,105,.98),rgba(19,47,84,.98)) !important;
+      box-shadow:0 0 0 1px rgba(68,220,255,.12),0 0 22px rgba(34,210,255,.16),inset 0 1px 0 rgba(255,255,255,.08) !important;
+    }
+    .stTabs [data-baseweb="tab-highlight"],.stTabs [data-baseweb="tab-border"] {display:none !important;}
+    .stTabs [data-testid="stTabContent"] {padding-top:12px !important;}
+    [data-testid="stMetric"] {
+      border-color:rgba(67,206,245,.34) !important;
+      background:linear-gradient(145deg,rgba(12,38,62,.96),rgba(5,16,30,.98)) !important;
+    }
+    [data-testid="stMetricValue"] {font-family:Orbitron,Inter,sans-serif !important;}
+    div.stButton>button,div.stDownloadButton>button {
+      border-radius:9px !important;min-height:2.8rem !important;
+      background:linear-gradient(110deg,#123f70,#07566f 62%,#087d83) !important;
+      box-shadow:0 7px 20px rgba(0,0,0,.18),0 0 16px rgba(32,211,255,.08) !important;
+    }
+    div.stButton>button:focus,div.stDownloadButton>button:focus {outline:2px solid rgba(92,234,255,.55) !important;outline-offset:2px;}
+    .stPlotlyChart,[data-testid="stDataFrame"] {
+      border:1px solid rgba(69,190,230,.28) !important;border-radius:14px !important;
+      background:rgba(4,15,28,.66) !important;overflow:hidden;
+    }
+    [data-testid="stAlert"] {border-radius:12px !important;}
+    .nx-footer {letter-spacing:2px !important;line-height:2 !important;}
+    @media(max-width:850px) {
+      .block-container {padding-left:1rem !important;padding-right:1rem !important;}
+      .nx-topbar {font-size:8px !important;letter-spacing:.7px !important;}
+      .nx-hero-main {min-height:225px !important;}
+      .nx-hero-main:before {display:none;}
+      .stTabs [data-baseweb="tab"] {padding:9px 12px !important;font-size:8px !important;}
+      .nx-mini-card {min-height:92px !important;}
+    }
+    @media(prefers-reduced-motion:reduce) {
+      .nx-topbar:after,.nx-hero-main:after,.nx-orbit:before,.nx-orbit:after,*:before,*:after {
+        animation:none !important;scroll-behavior:auto !important;
+      }
+      * {transition:none !important;}
+    }
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -553,7 +731,22 @@ with st.sidebar:
         disabled=(scenario == "Custom readings"),
         help="When enabled, Streamlit refreshes the dashboard periodically. Keep it off for uninterrupted animations.",
     )
-    st.caption("For smooth, uninterrupted animations, leave automatic updates OFF and use the manual reading button. Simulation only; no physical sensor is connected.")
+    st.caption("For smooth, uninterrupted animations, leave automatic updates OFF and use the manual reading button. Simulation only; no physical flow sensor is connected.")
+    st.divider()
+    st.markdown("### REALITY SENSOR LINK")
+    mobile_sensor_sync = st.toggle(
+        "Live mobile sensor sync",
+        value=False,
+        help="Poll Firebase every 2 seconds for the latest phone microphone RMS and motion features.",
+        key="hydranexus_mobile_sensor_sync",
+    )
+    st.caption("Experimental phone signals only. They are not L/min flow readings and do not enter the leak detector.")
+
+# The mobile feed has its own refresh key and does not alter the simulated-flow timer.
+if mobile_sensor_sync:
+    st_autorefresh(
+        interval=2000, limit=None, key="hydranexus_reality_sensor_refresh"
+    )
 
 # ---------- INPUT / SIMULATED HISTORY ----------
 if scenario == "Custom readings":
@@ -633,6 +826,34 @@ peak_flow = float(data["Flow (L/min)"].max())
 current_flow = float(data["Flow (L/min)"].iloc[-1])
 high_count = int(data["Above threshold"].sum())
 
+# ---------- REALITY SENSOR CLOUD SNAPSHOT ----------
+mobile_sensor_record = None
+mobile_sensor_error = None
+if FIREBASE_BRIDGE_AVAILABLE:
+    try:
+        mobile_sensor_record = get_latest_sensor_data()
+    except Exception as sensor_error:
+        mobile_sensor_error = str(sensor_error)
+else:
+    mobile_sensor_error = FIREBASE_BRIDGE_ERROR or "Firebase bridge is unavailable."
+
+mobile_sensor_age = None
+mobile_sensor_datetime = None
+mobile_sensor_is_fresh = False
+if isinstance(mobile_sensor_record, dict):
+    raw_timestamp = mobile_sensor_record.get("timestamp")
+    try:
+        timestamp_value = float(raw_timestamp)
+        # Browser Date.now() timestamps are milliseconds; accept seconds too.
+        timestamp_seconds = timestamp_value / 1000 if timestamp_value > 100_000_000_000 else timestamp_value
+        mobile_sensor_datetime = datetime.fromtimestamp(timestamp_seconds)
+        mobile_sensor_age = max(0.0, (datetime.now() - mobile_sensor_datetime).total_seconds())
+        mobile_sensor_is_fresh = mobile_sensor_age <= 10
+    except (TypeError, ValueError, OSError, OverflowError):
+        mobile_sensor_datetime = None
+        mobile_sensor_age = None
+        mobile_sensor_is_fresh = False
+
 
 # ---------- NEXUS COMMAND DECK ----------
 status_color = "#ff536d" if possible_leak else "#39f5a5"
@@ -643,7 +864,7 @@ st.markdown(
     f"""
     <div class="nx-topbar">
       <span>HYDRANEXUS <span style="color:#4de6ff">//</span> NEXUS COMMAND DECK</span>
-      <span>PROTOTYPE BUILD 01 · 2050 UI CONCEPT</span>
+      <span>AOI EDITION 02 · NEXUS COMMAND</span>
       <span class="nx-live">● SYSTEM ONLINE</span>
     </div>
     <div class="nx-hero-grid">
@@ -688,9 +909,10 @@ with k4:
     st.markdown(f'<div class="nx-mini-card"><div class="nx-mini-label">HIGH SAMPLES</div><div class="nx-mini-value">{high_count}<span style="font-size:11px"> / {len(readings)}</span></div><div class="nx-mini-foot">Above {threshold:.2f} L/min threshold</div></div>', unsafe_allow_html=True)
 
 st.markdown('<div class="nx-section-title">COMMAND WORKSPACES</div>', unsafe_allow_html=True)
-tab_overview, tab_telemetry, tab_intel, tab_network, tab_events, tab_sim, tab_diag, tab_ops = st.tabs([
+tab_overview, tab_telemetry, tab_intel, tab_network, tab_events, tab_sim, tab_diag, tab_ops, tab_reality = st.tabs([
     "◈ OVERVIEW", "⌁ TELEMETRY", "✳ INTELLIGENCE", "◎ SENSOR NETWORK",
-    "▤ EVENT LOG", "⟁ SIMULATION LAB", "⌬ DIAGNOSTICS", "◉ CONTROL ROOM"
+    "▤ EVENT LOG", "⟁ SIMULATION LAB", "⌬ DIAGNOSTICS", "◉ CONTROL ROOM",
+    "◉ REALITY SENSOR"
 ])
 
 # Shared chart constructors
@@ -897,8 +1119,332 @@ with tab_ops:
       <div style="color:#a8c4da;font-size:12px;line-height:1.8">Scenario: {scenario}<br>Current: {current_flow:.2f} L/min<br>Average: {average_flow:.2f} L/min<br>Peak: {peak_flow:.2f} L/min<br>Rule: {consecutive} consecutive samples above {threshold:.2f} L/min</div></div>""",unsafe_allow_html=True)
     st.caption("Conceptual operator workflow only. This prototype does not control external valves, pumps, or infrastructure.")
 
+with tab_reality:
+    st.markdown('<div class="nx-section-title">09 / REALITY SENSOR · MOBILE TELEMETRY</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="nx-info-card"><div class="nx-info-label">LIVE PHONE SIGNAL BRIDGE</div>'
+        '<div class="nx-info-copy">This workspace reads the latest acoustic RMS and motion features sent by the Android mobile terminal to Firebase. These are experimental device signals, not calibrated pipe-vibration measurements or water-flow rates.</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    if not FIREBASE_BRIDGE_AVAILABLE:
+        st.error("Firebase bridge could not be loaded. Keep firebase_bridge.py in the HydraNexus project folder and install firebase-admin in the active virtual environment.")
+        st.caption(f"Bridge import detail: {FIREBASE_BRIDGE_ERROR}")
+    elif mobile_sensor_error:
+        st.error("Firebase read failed. Check the local service-account file, Firebase project configuration and network connection.")
+        st.caption(f"Connection detail: {mobile_sensor_error}")
+    elif not isinstance(mobile_sensor_record, dict):
+        st.warning("No mobile sensor record was found yet. Open the HydraNexus mobile terminal on your phone, start sensor streaming, and enable Live mobile sensor sync in the sidebar.")
+    else:
+        if mobile_sensor_is_fresh:
+            st.markdown('<div class="nx-safe-card"><b>● CLOUD FEED RECEIVED</b><br>Latest phone record is within the 10-second freshness window.</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="nx-alert-card"><b>◷ SENSOR DATA STALE</b><br>The latest record is older than 10 seconds or has an unreadable timestamp. This is a connection-freshness warning, not a leak alert.</div>', unsafe_allow_html=True)
+
+        audio_rms = mobile_sensor_record.get("audioRms")
+        motion_magnitude = mobile_sensor_record.get("motionMagnitude")
+        motion_available = bool(mobile_sensor_record.get("motionAvailable", False))
+        device_label = str(mobile_sensor_record.get("device", "Unknown device"))
+        # ---------- FFT TELEMETRY ----------
+        def safe_sensor_float(value):
+            try:
+                number = float(value)
+                return number if math.isfinite(number) else None
+            except (TypeError, ValueError):
+                return None
+
+        dominant_frequency = safe_sensor_float(
+            mobile_sensor_record.get("dominantFrequencyHz")
+        )
+        spectral_peak = safe_sensor_float(
+            mobile_sensor_record.get("spectralPeakMagnitude")
+        )
+        sample_rate = safe_sensor_float(
+            mobile_sensor_record.get("sampleRateHz")
+        )
+
+        raw_bands = mobile_sensor_record.get("spectrumBands", [])
+        spectrum_values = []
+
+        if isinstance(raw_bands, (list, tuple)):
+            for value in raw_bands:
+                parsed = safe_sensor_float(value)
+                if parsed is None:
+                    spectrum_values = []
+                    break
+                spectrum_values.append(parsed)
+
+        if len(spectrum_values) != 16:
+            spectrum_values = []
+            # ---------- LIVE WAVEFORM TELEMETRY ----------
+        raw_waveform = mobile_sensor_record.get("waveformSamples", [])
+        waveform_values = []
+
+        if isinstance(raw_waveform, (list, tuple)):
+            for value in raw_waveform:
+                parsed = safe_sensor_float(value)
+
+                if parsed is None:
+                    waveform_values = []
+                    break
+
+                waveform_values.append(parsed)
+
+        # Validate the complete 128-sample packet.
+        if len(waveform_values) != 128:
+            waveform_values = []
+            # ---------- LIVE SIGNAL HISTORY ----------
+        raw_history_timestamp = safe_sensor_float(
+            mobile_sensor_record.get("timestamp")
+        )
+
+        if raw_history_timestamp is not None and mobile_sensor_datetime is not None:
+            history_timestamp_key = raw_history_timestamp
+
+            if "hydranexus_signal_history" not in st.session_state:
+                st.session_state.hydranexus_signal_history = []
+
+            history = st.session_state.hydranexus_signal_history
+
+            # Store each phone reading only once.
+            if not history or history[-1]["timestamp_key"] != history_timestamp_key:
+                history.append({
+                    "timestamp_key": history_timestamp_key,
+                    "time": mobile_sensor_datetime,
+                    "frequency": dominant_frequency,
+                    "rms": safe_sensor_float(audio_rms),
+                    "motion": safe_sensor_float(motion_magnitude),
+                })
+
+            # Keep the latest 120 records.
+            st.session_state.hydranexus_signal_history = history[-120:]
+
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            try:
+                st.metric("ACOUSTIC RMS", f"{float(audio_rms):.6f}" if audio_rms is not None else "—")
+            except (TypeError, ValueError):
+                st.metric("ACOUSTIC RMS", "Invalid")
+        with m2:
+            try:
+                st.metric("MOTION MAGNITUDE", f"{float(motion_magnitude):.3f}" if motion_magnitude is not None else "—")
+            except (TypeError, ValueError):
+                st.metric("MOTION MAGNITUDE", "Invalid")
+        with m3:
+            st.metric("MOTION SENSOR", "AVAILABLE" if motion_available else "UNAVAILABLE")
+
+        st.markdown(
+            '<div class="nx-section-title">FFT FREQUENCY INTELLIGENCE</div>',
+            unsafe_allow_html=True,
+        )
+
+        f1, f2, f3 = st.columns(3)
+
+        with f1:
+            st.metric(
+                "DOMINANT FREQUENCY",
+                f"{dominant_frequency:.2f} Hz"
+                if dominant_frequency is not None else "—",
+            )
+
+        with f2:
+            st.metric(
+                "SPECTRAL PEAK",
+                f"{spectral_peak:.4f}"
+                if spectral_peak is not None else "—",
+            )
+
+        with f3:
+            st.metric(
+                "AUDIO SAMPLE RATE",
+                f"{sample_rate:.0f} Hz"
+                if sample_rate is not None else "—",
+            )
+
+        if spectrum_values:
+            spectrum_fig = go.Figure()
+
+            spectrum_fig.add_trace(go.Bar(
+                x=[f"Band {i + 1}" for i in range(16)],
+                y=spectrum_values,
+                name="Frequency magnitude",
+            ))
+
+            spectrum_fig.update_layout(
+                title="16-BAND LIVE FREQUENCY SPECTRUM",
+                template="plotly_dark",
+                height=340,
+                xaxis_title="Frequency band",
+                yaxis_title="Magnitude",
+                margin=dict(l=20, r=20, t=55, b=35),
+            )
+
+            st.plotly_chart(
+                spectrum_fig,
+                use_container_width=True,
+            )
+        else:
+            st.info(
+                "FFT spectrum data is not available yet. "
+                "Start sensor streaming on your mobile terminal."
+            )
+            # ---------- LIVE MOBILE WAVEFORM ----------
+        st.markdown(
+            '<div class="nx-section-title">LIVE MOBILE WAVEFORM / REALITY SENSOR</div>',
+            unsafe_allow_html=True,
+        )
+
+        if waveform_values:
+            waveform_fig = go.Figure()
+
+            waveform_fig.add_trace(go.Scatter(
+                x=list(range(len(waveform_values))),
+                y=waveform_values,
+                mode="lines",
+                name="Mobile waveform",
+                line=dict(width=2, color="#4de6ff"),
+                fill="tozeroy",
+            ))
+
+            waveform_fig.update_layout(
+                title="REAL-TIME ACOUSTIC WAVEFORM · 128 SAMPLES",
+                template="plotly_dark",
+                height=320,
+                xaxis_title="Sample index",
+                yaxis_title="Normalized amplitude",
+                yaxis=dict(range=[-1, 1]),
+                margin=dict(l=20, r=20, t=55, b=35),
+            )
+
+            st.plotly_chart(
+                waveform_fig,
+                use_container_width=True,
+            )
+
+            st.caption(
+                "Displaying the latest 128 normalized waveform samples "
+                "received from the mobile microphone."
+            )
+        else:
+            st.info(
+                "Waiting for a valid 128-sample mobile waveform packet."
+            )
+            # ---------- LIVE SIGNAL HISTORY GRAPHS ----------
+        history_df = pd.DataFrame(
+            st.session_state.get("hydranexus_signal_history", [])
+        )
+
+        st.markdown(
+            '<div class="nx-section-title">LIVE SIGNAL HISTORY / 120 SAMPLES</div>',
+            unsafe_allow_html=True,
+        )
+
+        if not history_df.empty:
+            history_df = history_df.dropna(subset=["time"])
+
+            if not history_df.empty:
+                frequency_fig = go.Figure()
+                frequency_fig.add_trace(go.Scatter(
+                    x=history_df["time"],
+                    y=history_df["frequency"],
+                    mode="lines+markers",
+                    name="Dominant frequency",
+                    line=dict(width=2, color="#4de6ff"),
+                ))
+                frequency_fig.update_layout(
+                    title="DOMINANT FREQUENCY / TIME",
+                    template="plotly_dark",
+                    height=330,
+                    xaxis_title="Time",
+                    yaxis_title="Frequency (Hz)",
+                    margin=dict(l=20, r=20, t=55, b=35),
+                )
+                st.plotly_chart(
+                    frequency_fig,
+                    use_container_width=True,
+                )
+
+                signal_left, signal_right = st.columns(2)
+
+                with signal_left:
+                    rms_fig = go.Figure()
+                    rms_fig.add_trace(go.Scatter(
+                        x=history_df["time"],
+                        y=history_df["rms"],
+                        mode="lines+markers",
+                        name="Acoustic RMS",
+                        line=dict(width=2, color="#39f5a5"),
+                    ))
+                    rms_fig.update_layout(
+                        title="ACOUSTIC SIGNAL HISTORY",
+                        template="plotly_dark",
+                        height=300,
+                        xaxis_title="Time",
+                        yaxis_title="RMS amplitude",
+                    )
+                    st.plotly_chart(
+                        rms_fig,
+                        use_container_width=True,
+                    )
+
+                with signal_right:
+                    motion_fig = go.Figure()
+                    motion_fig.add_trace(go.Scatter(
+                        x=history_df["time"],
+                        y=history_df["motion"],
+                        mode="lines+markers",
+                        name="Motion magnitude",
+                        line=dict(width=2, color="#ffbd59"),
+                    ))
+                    motion_fig.update_layout(
+                        title="MOTION SIGNAL HISTORY",
+                        template="plotly_dark",
+                        height=300,
+                        xaxis_title="Time",
+                        yaxis_title="Motion magnitude",
+                    )
+                    st.plotly_chart(
+                        motion_fig,
+                        use_container_width=True,
+                    )
+
+                st.caption(
+                    f"Stored phone samples: {len(history_df)} / 120. "
+                    "History is maintained for this active Streamlit session."
+                )
+        else:
+            st.info(
+                "Signal history is waiting for the first mobile sensor reading."
+            )
+
+        info_left, info_right = st.columns(2)
+        with info_left:
+            st.markdown(
+                '<div class="nx-info-card"><div class="nx-info-label">DEVICE IDENTITY</div>'
+                f'<div style="font:800 15px Orbitron;color:#eafaff">{html_escape(device_label)}</div>'
+                '<div class="nx-info-copy">Source label supplied by the mobile browser terminal.</div></div>',
+                unsafe_allow_html=True,
+            )
+        with info_right:
+            last_seen = mobile_sensor_datetime.strftime("%Y-%m-%d %H:%M:%S") if mobile_sensor_datetime else "Timestamp unavailable"
+            age_text = f"{mobile_sensor_age:.1f} seconds ago" if mobile_sensor_age is not None else "Age unavailable"
+            st.markdown(
+                '<div class="nx-info-card"><div class="nx-info-label">LAST CLOUD UPDATE</div>'
+                f'<div style="font:800 15px Orbitron;color:#eafaff">{last_seen}</div>'
+                f'<div class="nx-info-copy">{age_text} · Local machine time</div></div>',
+                unsafe_allow_html=True,
+            )
+
+        st.markdown('<div class="nx-section-title">SIGNAL INTERPRETATION & BOUNDARIES</div>', unsafe_allow_html=True)
+        st.info("Acoustic RMS represents the amplitude of the microphone signal processed in the browser. Motion magnitude comes from the phone motion sensor and is not calibrated pipe vibration. Changes can be caused by handling the phone, room noise or other environmental factors.")
+        st.warning("These readings do not measure L/min, do not confirm a leak, and are deliberately isolated from the existing flow-based leak detector.")
+        if mobile_sensor_sync:
+            st.caption("Live polling is ON · Firebase is checked every 2 seconds. Turn it OFF in the sidebar to stop automatic refresh.")
+        else:
+            st.caption("Live polling is OFF · The latest available record is shown when the app reruns. Enable Live mobile sensor sync in the sidebar for continuous updates.")
+
 st.markdown(
     '<div class="nx-footer">HYDRANEXUS // DETECT · ANALYZE · CONSERVE<br>'
-    'NEXUS COMMAND DECK · SOFTWARE PROTOTYPE · SIMULATED / MANUAL DATA</div>',
+    'AOI COMMAND DECK · NINE WORKSPACES · FLOW INTELLIGENCE + MOBILE SIGNAL LAB</div>',
     unsafe_allow_html=True,
 )
