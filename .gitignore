@@ -1,5 +1,6 @@
 .venv/
-pycache/
-*.py[cod]
-.pytest_cache/
+venv/
+__pycache__/
+*.pyc
 .env
+hydranexus-service-account.json
